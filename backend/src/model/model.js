@@ -5,6 +5,10 @@ const ChatApp = new mongoose.Schema(
     username: String,
     avatar: String,
     msg: String,
+    received: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
