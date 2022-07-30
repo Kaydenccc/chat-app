@@ -1,0 +1,64 @@
+.chat_w {
+  margin: 10px;
+  display: flex;
+  justify-content: flex-start;
+}
+.chat_w.recieve {
+  justify-content: flex-end;
+}
+.chat {
+  position: relative;
+  width: fit-content;
+  display: inline-flex;
+  height: fit-content;
+  font-weight: 500;
+  justify-content: center;
+  align-items: center;
+  font-size: 14.2px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background-color: #f2f2f2;
+  color: #595959;
+}
+
+.chat .sayap {
+  position: absolute;
+  top: 0;
+  left: -10px;
+  height: 0;
+  width: 0;
+  border-radius-bottom: 100%;
+  border-top: solid 20px #f2f2f2;
+  border-left: solid 20px transparent;
+  border-right: solid 20px transparent;
+}
+.chat__des {
+  width: 60px;
+}
+.chat__ket {
+  position: absolute;
+  display: inline-flex;
+  justify-content: center;
+  align-items: flex-end;
+  right: 5px;
+  bottom: 5px;
+  font-size: 12px;
+}
+.chat__centang {
+  font-size: 16px;
+}
+.chat.reciever {
+  background-color: #2b9348;
+  color: #eee;
+}
+.chat .sayap-kanan {
+  position: absolute;
+  top: 0;
+  right: -10px;
+  height: 0;
+  width: 0;
+  border-radius-bottom: 100%;
+  border-top: solid 20px #2b9348;
+  border-left: solid 20px transparent;
+  border-right: solid 20px transparent;
+}

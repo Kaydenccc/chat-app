@@ -1,0 +1,55 @@
+h4,
+p {
+  margin: 0;
+  padding: 0;
+}
+.CardChat {
+  display: flex;
+}
+.CardChat__left {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.CardChat__hedearTopLeft {
+  height: 49px;
+  width: 49px;
+  border-radius: 100%;
+  overflow: hidden;
+  margin: 0 15px;
+}
+.CardChat__hedearTopLeft img {
+  object-fit: cover;
+  object-position: top;
+  height: 100%;
+  width: 100%;
+}
+.CardChat {
+  height: 72px;
+  display: flex;
+  align-items: center;
+}
+
+.CardChat__right {
+  height: 100%;
+  width: 100%;
+  text-align: left;
+  margin-right: 16px;
+  border-bottom: 1px solid #ccc;
+  /* padding-bottom: 16px; */
+}
+.warp__username p {
+  font-weight: 600;
+  font-size: 12px;
+}
+.CardChat__username {
+  text-align: left;
+}
+
+.warp__username {
+  margin-top: 12px;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
