@@ -1,6 +1,7 @@
 # chat-app
-Membuat membuat chat app sederhana
+Membuat chat app sederhana
 
 
+#FREFERENSI
 WHATAPP CLONE
 YT: CLEVER PROGRAMMER
