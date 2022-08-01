@@ -22,6 +22,7 @@ const Controller = {
       username: req.body.username,
       avatar: req.body.avatar,
       msg: req.body.msg,
+      received: req.body.received,
     };
     ChatModel.create(data, function (err, chat) {
       if (err) return console.log(err);

@@ -1,7 +1,8 @@
 .home {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   flex-direction: row;
+  overflow: hidden;
 }
 .home__left {
   display: flex;
@@ -105,9 +106,11 @@
   box-sizing: border-box;
   flex-direction: column;
   justify-content: flex-start;
-  flex-grow: 1;
+  flex: 1;
   padding: 2rem 2rem 0 2rem;
+  overflow-y: scroll;
 }
+
 .homeRight__footer {
   display: flex;
   background: #eee;
@@ -148,4 +151,13 @@
 }
 .sen {
   margin-left: 16px;
+}
+.send {
+  display: none;
+}
+.CardChat_right {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  /* opacity: 1; */
 }

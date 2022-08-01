@@ -29,6 +29,7 @@ p {
   height: 72px;
   display: flex;
   align-items: center;
+  opacity: 0.5;
 }
 
 .CardChat__right {

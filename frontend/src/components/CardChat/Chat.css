@@ -1,14 +1,18 @@
 .chat_w {
-  margin: 10px;
+  margin: 3px;
   display: flex;
+  flex-direction: column;
   justify-content: flex-start;
 }
 .chat_w.recieve {
   justify-content: flex-end;
+  align-items: end;
 }
 .chat {
   position: relative;
   width: fit-content;
+  max-width: 70%;
+  text-align: left;
   display: inline-flex;
   height: fit-content;
   font-weight: 500;
@@ -61,4 +65,12 @@
   border-top: solid 20px #2b9348;
   border-left: solid 20px transparent;
   border-right: solid 20px transparent;
+}
+.username {
+  width: fit-content;
+  margin: 0;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 0;
+  margin-bottom: 0.3rem;
 }

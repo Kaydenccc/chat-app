@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './home.css';
 import { TbMessage } from 'react-icons/tb';
 import { BsThreeDotsVertical } from 'react-icons/bs';
@@ -11,7 +11,54 @@ import { BsFillStickiesFill } from 'react-icons/bs';
 import image from '../../assets/Background.jpg';
 import CardChat from '../../components/CardChat/CardChat';
 import Chat from '../../components/CardChat/Chat';
+import Pusher from 'pusher-js';
+import axios from '../../axios/axios';
+
 function Home() {
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    axios
+      .get('/api/v1/chats')
+      .then((response) => setMessages(response.data.data))
+      .catch((err) => console.error(err));
+  }, []);
+  useEffect(() => {
+    let pusher = new Pusher('92228adad1f9e8633ee8', {
+      cluster: 'ap1',
+    });
+
+    let channel = pusher.subscribe('messages');
+    channel.bind('inserted', function (data) {
+      if (data) {
+        message.pop(message.length - 1, 1);
+        setMessages([...messages, data]);
+      }
+    });
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+  }, [messages, message]);
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const data = {
+      username: 'Anhar',
+      avatar: 'anhar.jpg',
+      msg: message,
+      received: true,
+    };
+    setMessages([...messages, data]);
+    await axios.post('/api/v1/chats/post', {
+      username: 'Anhar',
+      avatar: 'anhar.jpg',
+      msg: message,
+      received: true,
+    });
+    setMessage('');
+  };
   return (
     <div className="home">
       <div className="home__left">
@@ -43,7 +90,7 @@ function Home() {
       </div>
       <div className="home__right">
         <div className="homeRight__header">
-          <div className="CardChat">
+          <div className="CardChat_right">
             <div className="CardChat__left">
               <div className="CardChat__hedearTopLeft">
                 <img src={image} alt="avatar" />
@@ -62,9 +109,9 @@ function Home() {
           </div>
         </div>
         <main className="main__chat">
-          <Chat reciever={false} />
-          <Chat reciever={true} />
-          <Chat reciever={false} />
+          {messages.map((message) => (
+            <Chat key={message._id} message={message} />
+          ))}
         </main>
         <footer className="homeRight__footer">
           <div className="footer__emoji">
@@ -72,7 +119,12 @@ function Home() {
             <BsFillStickiesFill />
           </div>
           <div className="footer__type">
-            <input type="text" placeholder="Ketik pesan" />
+            <form action="">
+              <input onChange={(e) => setMessage(e.target.value)} value={message} type="text" placeholder="Ketik pesan" />
+              <button onClick={onSubmit} className="send" type="submit">
+                Send a message
+              </button>
+            </form>
           </div>
           <div className="sen">
             <BsFillMicFill />
