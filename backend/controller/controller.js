@@ -1,4 +1,4 @@
-const express = require('express');
+const AuthChatAppModel = require('../src/model/authChatAppModel');
 const ChatModel = require('../src/model/model');
 const Controller = {
   getAllData: (req, res) => {
@@ -45,6 +45,42 @@ const Controller = {
         res.status(200).json({ msg: 'GET successfully', data: chat });
       }
     );
+  },
+
+  //!!CONTROLER AUTHENTIFICATIOPN
+  getUsersAuth: (req, res) => {
+    AuthChatAppModel.find((err, data) => {
+      if (err) return console.log(err);
+      if (data.length <= 0) {
+        return res.status(404).json({ msg: 'Data tidak ditemukan', data });
+      }
+      res.status(200).json({ msg: 'successfully', data });
+    });
+  },
+  postUserAuth: (req, res) => {
+    console.log('REQUEST BODY: ', req.body);
+    console.log('REQUEST FILE: ', req.file);
+    if (!req.body.first_name || !req.body.last_name || !req.body.email || !req.body.password) {
+      return res.status(400).json({ msg: 'Data tidak tidak boleh kosong' });
+    }
+    if (!req.file) {
+      res.status(400).json({ msg: 'Data tidak tidak boleh kosong', file: req.file });
+    }
+
+    const dataAuth = {
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      avatar: req.file.path,
+      email: req.body.email,
+      password: req.body.password,
+    };
+    AuthChatAppModel.create(dataAuth, (err, data) => {
+      if (err) return console.log(err);
+      if (data.length <= 0) {
+        return res.status(404).json({ msg: 'Data tidak ditemukan', data });
+      }
+      res.status(201).json({ msg: 'Post data successfully', data });
+    });
   },
 };
 module.exports = Controller;

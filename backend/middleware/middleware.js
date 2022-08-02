@@ -2,6 +2,8 @@ const cors = require('cors');
 const express = require('express');
 const Pusher = require('pusher');
 const mongoose = require('mongoose');
+const multer = require('multer');
+const path = require('path');
 
 const middleware = (app) => {
   const pusher = new Pusher({
@@ -15,7 +17,24 @@ const middleware = (app) => {
   app.use(cors());
   app.use(express.json()); // for parsing application/json
   app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-
+  app.use('/images', express.static(path.join(__dirname, '../', 'images')));
+  //COONFIGURASI MULTER
+  const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'images');
+    },
+    filename: (req, file, cb) => {
+      cb(null, new Date().getTime() + '-' + file.originalname);
+    },
+  });
+  const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
+      cb(null, true);
+    } else {
+      cb(null, false);
+    }
+  };
+  app.use(multer({ storage, fileFilter }).single('avatar'));
   //MEMRINTAHKAN DB UNTUK TERUS MEMERHATIKAN PERUBAHAN PADA COLLACTION CHAT
   const db = mongoose.connection;
   db.on('open', () => {
