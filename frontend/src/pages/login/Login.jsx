@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './login.css';
 import image from '../../assets/Background.jpg';
 import { FcPlus } from 'react-icons/fc';
@@ -7,8 +7,10 @@ import { IoIosCheckmarkCircle } from 'react-icons/io';
 import { GiNothingToSay } from 'react-icons/gi';
 import { MdSmsFailed } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../App';
 
 function Login() {
+  const { dispatch } = useContext(AuthContext);
   const navigate = useNavigate();
   const [isRegistered, setRegistered] = useState(true);
   const [firsName, setFirstName] = useState('');
@@ -110,9 +112,9 @@ function Login() {
       .get('/api/auth/users')
       .then((response) => {
         const data = response.data.data.filter((user) => user.first_name.toLowerCase() === loginUsername.toLowerCase() && user.password === loginPassword);
-        // console.log(data[0].email);
         if (data.length > 0) {
           if (data[0].email) {
+            dispatch({ type: 'LOGIN' });
             navigate('/home?username=' + loginUsername + '&email=' + data[0].email);
           }
         } else {
@@ -132,7 +134,6 @@ function Login() {
         // }
       });
   };
-  console.log(tidakada);
   return (
     <div className="auth">
       <div className={`popModal ${isSuccess ? 'active' : ''}`}>

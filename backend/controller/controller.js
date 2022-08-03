@@ -4,7 +4,6 @@ const Controller = {
   getAllData: (req, res) => {
     ChatModel.find({}, function (err, chat) {
       if (err) return console.log(err);
-      // console.log('CHAT:', chat);
       res.status(200).json({ msg: 'GET successfully', data: chat });
     });
   },

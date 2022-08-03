@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './home.css';
 import { TbMessage } from 'react-icons/tb';
-import { BsEggFill, BsThreeDotsVertical } from 'react-icons/bs';
+import { BsThreeDotsVertical } from 'react-icons/bs';
 import { TbBrandGravatar } from 'react-icons/tb';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { MdOutlineEmojiEmotions } from 'react-icons/md';
@@ -18,7 +18,7 @@ import { useSearchParams } from 'react-router-dom';
 const LOCAL_URL = 'http://localhost:5000/';
 
 function Home(props) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [userData, setUserData] = useState();
 
   console.log();
@@ -27,9 +27,15 @@ function Home(props) {
 
   //FIND USER BY EMAIL
   useEffect(() => {
-    axios.get('/api/auth/user/' + searchParams.get('email')).then((response) => {
-      setUserData(response.data.data);
-    });
+    axios
+      .get('/api/auth/user/' + searchParams.get('email'))
+      .then((response) => {
+        console.log('TEST:', response.data.data);
+        setUserData(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, [searchParams]);
   console.log(userData);
   useEffect(() => {
@@ -64,14 +70,14 @@ function Home(props) {
     e.preventDefault();
     const data = {
       _id: 'askdad90endaned933823e2ne2n2o38' + new Date().getTime(),
-      username: searchParams.get('username'),
+      username: userData[0].first_name,
       email: searchParams.get('email'),
       msg: message,
       received: true,
     };
     setMessages([...messages, data]);
     await axios.post('/api/v1/chats/post/' + searchParams.get('username'), {
-      username: searchParams.get('username'),
+      username: userData[0].first_name,
       email: searchParams.get('email'),
       msg: message,
       received: true,
@@ -118,7 +124,7 @@ function Home(props) {
             </div>
             <div className="CardChat__right">
               <div className="warp__username">
-                <h4 className="CardChat__username">{searchParams.get('username')}</h4>
+                <h4 className="CardChat__username">{userData && userData[0].first_name}</h4>
               </div>
               <p className="CardChat__message">online</p>
             </div>
