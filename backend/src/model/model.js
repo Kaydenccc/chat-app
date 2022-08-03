@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const ChatApp = new mongoose.Schema(
   {
     username: String,
-    avatar: String,
+    email: String,
     msg: String,
     received: {
       type: Boolean,

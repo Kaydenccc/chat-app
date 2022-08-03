@@ -4,7 +4,7 @@ const Controller = {
   getAllData: (req, res) => {
     ChatModel.find({}, function (err, chat) {
       if (err) return console.log(err);
-      console.log(chat);
+      // console.log('CHAT:', chat);
       res.status(200).json({ msg: 'GET successfully', data: chat });
     });
   },
@@ -14,13 +14,19 @@ const Controller = {
       res.status(200).json({ msg: 'GET successfully', data: chat });
     });
   },
+
   postData: (req, res) => {
-    if (!req.body.username || !req.body.avatar || !req.body.msg) {
+    if (!req.body.username || !req.body.msg || !req.body.email) {
       return res.status(404).json({ msg: 'Data tidak boleh kosong' });
+    }
+    console.log(req.params.username);
+    console.log(req.body.username);
+    if (req.params.username === req.body.username) {
+      req.body.received = true;
     }
     const data = {
       username: req.body.username,
-      avatar: req.body.avatar,
+      email: req.body.email,
       msg: req.body.msg,
       received: req.body.received,
     };
@@ -56,6 +62,16 @@ const Controller = {
       }
       res.status(200).json({ msg: 'successfully', data });
     });
+  },
+  getUserAuthByEmail: (req, res) => {
+    console.log('PARAM:', req.params.email);
+    if (req.params.email) {
+      AuthChatAppModel.find({ email: req.params.email }, 'email avatar first_name last_name', function (err, chat) {
+        if (err) return console.log(err);
+
+        res.status(200).json({ msg: 'GET successfully', data: chat });
+      });
+    }
   },
   postUserAuth: (req, res) => {
     console.log('REQUEST BODY: ', req.body);

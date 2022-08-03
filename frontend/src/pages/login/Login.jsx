@@ -22,7 +22,7 @@ function Login() {
   const [tidakada, settidakAda] = useState(false);
 
   //login input
-  const [loginEmail, setLoginEmail] = useState('');
+  const [loginUsername, setLoginUsername] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
 
   const sendDataUser = (e) => {
@@ -109,9 +109,12 @@ function Login() {
     axios
       .get('/api/auth/users')
       .then((response) => {
-        const data = response.data.data.filter((user) => user.email === loginEmail && user.password === loginPassword);
+        const data = response.data.data.filter((user) => user.first_name.toLowerCase() === loginUsername.toLowerCase() && user.password === loginPassword);
+        // console.log(data[0].email);
         if (data.length > 0) {
-          navigate('/home');
+          if (data[0].email) {
+            navigate('/home?username=' + loginUsername + '&email=' + data[0].email);
+          }
         } else {
           settidakAda(true);
           setTimeout(() => {
@@ -120,12 +123,13 @@ function Login() {
         }
       })
       .catch((err) => {
-        if (err.response.data.data.length <= 0) {
-          settidakAda(true);
-          setTimeout(() => {
-            settidakAda(false);
-          }, 1500);
-        }
+        console.log(err);
+        // if (err.data.length <= 0) {
+        //   settidakAda(true);
+        //   setTimeout(() => {
+        //     settidakAda(false);
+        //   }, 1500);
+        // }
       });
   };
   console.log(tidakada);
@@ -168,7 +172,7 @@ function Login() {
               {' '}
               <span>Login To App</span>
               <form className="form-input">
-                <input value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required type="email" placeholder="Enter Your Email Address *" />
+                <input value={loginUsername} onChange={(e) => setLoginUsername(e.target.value)} required type="username" placeholder="Enter Your Username *" />
                 <input value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required type="password" placeholder="Enter Your Password *" />
                 <button onClick={onLoginSubmit} type="submit">
                   Submit

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './home.css';
 import { TbMessage } from 'react-icons/tb';
-import { BsThreeDotsVertical } from 'react-icons/bs';
+import { BsEggFill, BsThreeDotsVertical } from 'react-icons/bs';
 import { TbBrandGravatar } from 'react-icons/tb';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { MdOutlineEmojiEmotions } from 'react-icons/md';
@@ -13,17 +13,35 @@ import CardChat from '../../components/CardChat/CardChat';
 import Chat from '../../components/CardChat/Chat';
 import Pusher from 'pusher-js';
 import axios from '../../axios/axios';
+import { useSearchParams } from 'react-router-dom';
 
-function Home() {
+const LOCAL_URL = 'http://localhost:5000/';
+
+function Home(props) {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [userData, setUserData] = useState();
+
+  console.log();
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
 
+  //FIND USER BY EMAIL
+  useEffect(() => {
+    axios.get('/api/auth/user/' + searchParams.get('email')).then((response) => {
+      setUserData(response.data.data);
+    });
+  }, [searchParams]);
+  console.log(userData);
   useEffect(() => {
     axios
       .get('/api/v1/chats')
-      .then((response) => setMessages(response.data.data))
+      .then((response) => {
+        if (response) {
+          setMessages(response.data.data);
+        }
+      })
       .catch((err) => console.error(err));
-  }, []);
+  }, [searchParams]);
   useEffect(() => {
     let pusher = new Pusher('92228adad1f9e8633ee8', {
       cluster: 'ap1',
@@ -31,8 +49,8 @@ function Home() {
 
     let channel = pusher.subscribe('messages');
     channel.bind('inserted', function (data) {
+      console.log('DATA', data);
       if (data) {
-        message.pop(message.length - 1, 1);
         setMessages([...messages, data]);
       }
     });
@@ -45,15 +63,16 @@ function Home() {
   const onSubmit = async (e) => {
     e.preventDefault();
     const data = {
-      username: 'Anhar',
-      avatar: 'anhar.jpg',
+      _id: 'askdad90endaned933823e2ne2n2o38' + new Date().getTime(),
+      username: searchParams.get('username'),
+      email: searchParams.get('email'),
       msg: message,
       received: true,
     };
     setMessages([...messages, data]);
-    await axios.post('/api/v1/chats/post', {
-      username: 'Anhar',
-      avatar: 'anhar.jpg',
+    await axios.post('/api/v1/chats/post/' + searchParams.get('username'), {
+      username: searchParams.get('username'),
+      email: searchParams.get('email'),
       msg: message,
       received: true,
     });
@@ -65,7 +84,7 @@ function Home() {
         <div className="left__header">
           <div className="left__hedearTop">
             <div className="left__hedearTopLeft">
-              <img src={image} alt="avatar" />
+              <img src={userData ? LOCAL_URL + userData[0].avatar : image} alt="avatar" />
             </div>
             <div className="left__headerTopRight">
               <TbBrandGravatar className="icons" />
@@ -82,6 +101,7 @@ function Home() {
           </div>
         </div>
         <div className="CardChat__wrapper">
+          <h3 style={{ textAlign: 'left', paddingLeft: '16px' }}>COMING SOON..</h3>
           <CardChat />
           <CardChat />
           <CardChat />
@@ -93,12 +113,12 @@ function Home() {
           <div className="CardChat_right">
             <div className="CardChat__left">
               <div className="CardChat__hedearTopLeft">
-                <img src={image} alt="avatar" />
+                <img src={userData ? LOCAL_URL + userData[0].avatar : image} alt="avatar" />
               </div>
             </div>
             <div className="CardChat__right">
               <div className="warp__username">
-                <h4 className="CardChat__username">Kaydencc</h4>
+                <h4 className="CardChat__username">{searchParams.get('username')}</h4>
               </div>
               <p className="CardChat__message">online</p>
             </div>
@@ -109,9 +129,15 @@ function Home() {
           </div>
         </div>
         <main className="main__chat">
-          {messages.map((message) => (
-            <Chat key={message._id} message={message} />
-          ))}
+          {messages.map((message) => {
+            if (message.username.toLowerCase() === searchParams.get('username').toLowerCase() && message.email === searchParams.get('email')) {
+              message.received = true;
+              return <Chat key={message._id} message={message} />;
+            } else {
+              message.received = false;
+              return <Chat key={message._id} message={message} />;
+            }
+          })}
         </main>
         <footer className="homeRight__footer">
           <div className="footer__emoji">
