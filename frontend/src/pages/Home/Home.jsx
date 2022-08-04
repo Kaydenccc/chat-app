@@ -14,16 +14,19 @@ import Chat from '../../components/CardChat/Chat';
 import Pusher from 'pusher-js';
 import axios from '../../axios/axios';
 import { useSearchParams } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../../App';
 
 const LOCAL_URL = 'http://localhost:5000/';
 
 function Home(props) {
+  const { state } = useContext(AuthContext);
   const [searchParams] = useSearchParams();
   const [userData, setUserData] = useState();
 
-  console.log();
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
+  const [reset, setReset] = useState(false);
 
   //FIND USER BY EMAIL
   useEffect(() => {
@@ -47,7 +50,7 @@ function Home(props) {
         }
       })
       .catch((err) => console.error(err));
-  }, [searchParams]);
+  }, [state.isDelete, reset]);
   useEffect(() => {
     let pusher = new Pusher('92228adad1f9e8633ee8', {
       cluster: 'ap1',
@@ -58,6 +61,13 @@ function Home(props) {
       console.log('DATA', data);
       if (data) {
         setMessages([...messages, data]);
+      }
+    });
+    channel.bind('deleted', function (data) {
+      console.log('DATA', data);
+      if (data) {
+        const res = messages.filter((e) => e._id !== data.id);
+        setMessages(res);
       }
     });
     return () => {
@@ -83,6 +93,8 @@ function Home(props) {
       received: true,
     });
     setMessage('');
+    messages.pop();
+    setReset(!reset);
   };
   return (
     <div className="home">

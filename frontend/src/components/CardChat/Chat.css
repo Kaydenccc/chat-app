@@ -4,6 +4,7 @@
   flex-direction: column;
   justify-content: flex-start;
 }
+
 .chat_w.recieve {
   justify-content: flex-end;
   align-items: end;
@@ -24,7 +25,62 @@
   background-color: #f2f2f2;
   color: #595959;
 }
+.chat:hover .chat__dropDown {
+  visibility: visible;
+  opacity: 1;
+}
+.chat__dropDown {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 10;
+  font-size: 20px;
+  position: absolute;
+  top: 2px;
+  right: 5px;
+}
+.chat__menu {
+  background-color: #7d9d9c;
+  border-radius: 3px;
+  position: absolute;
+  z-index: 9;
+  top: 25px;
+  right: 5px;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0;
+  color: #595959;
+  transition: all 0.3s ease;
+  height: 0;
+  visibility: hidden;
+  opacity: 0;
+}
+.chat__menu.active {
+  visibility: visible;
+  opacity: 1;
+  height: fit-content;
+}
+.chat__menu:before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  right: 0px;
+  border-bottom: solid 10px #7d9d9c;
+  border-left: solid 10px transparent;
+  border-right: solid 10px transparent;
+}
+.chat__menu > span {
+  cursor: pointer;
 
+  padding: 0.5rem;
+}
+.chat__menu > span:hover {
+  background: #576f72;
+}
+.chat__dropDown:active {
+  opacity: 0.7;
+}
 .chat .sayap {
   position: absolute;
   top: 0;

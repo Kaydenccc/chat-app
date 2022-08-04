@@ -9,16 +9,24 @@ export const AuthContext = createContext();
 
 const initialState = {
   isValidated: false,
+  isDelete: false,
 };
 const reducer = (state, action) => {
   switch (action.type) {
     case 'LOGIN':
       return {
+        ...state,
         isValidated: true,
       };
     case 'LOGOUT':
       return {
+        ...state,
         isValidated: false,
+      };
+    case 'DELETED':
+      return {
+        ...state,
+        isDelete: !state.isDelete,
       };
     default:
       return state;

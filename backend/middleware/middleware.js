@@ -54,6 +54,11 @@ const middleware = (app) => {
           received: chat.received,
           createAt: chat.createdAt,
         });
+      } else if (change.operationType === 'delete') {
+        console.log(change.documentKey._id);
+        pusher.trigger('messages', 'deleted', {
+          id: change.documentKey._id,
+        });
       }
     });
   });
