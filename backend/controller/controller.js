@@ -1,5 +1,6 @@
 const AuthChatAppModel = require('../src/model/authChatAppModel');
 const ChatModel = require('../src/model/model');
+const jwt = require('jsonwebtoken');
 const Controller = {
   getAllData: (req, res) => {
     ChatModel.find({}, function (err, chat) {
@@ -53,13 +54,14 @@ const Controller = {
   },
 
   //!!CONTROLER AUTHENTIFICATIOPN
-  getUsersAuth: (req, res) => {
-    AuthChatAppModel.find((err, data) => {
+  postsUsersAuth: (req, res) => {
+    AuthChatAppModel.findOne({ email: req.body.email, password: req.body.password }, (err, data) => {
       if (err) return console.log(err);
-      if (data.length <= 0) {
-        return res.status(404).json({ msg: 'Data tidak ditemukan', data });
+      if (!data) {
+        return res.status(404).json({ msg: 'Email is not found', data });
       }
-      res.status(200).json({ msg: 'successfully', data });
+      const token = jwt.sign({ id: data._id }, 'ScreatedTokenJWT', { expiresIn: 60 });
+      res.header('set-token', token).status(200).json({ msg: 'successfully', data, token: token });
     });
   },
   getUserAuthByEmail: (req, res) => {

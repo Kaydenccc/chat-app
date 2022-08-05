@@ -169,3 +169,16 @@
   align-items: center;
   /* opacity: 1; */
 }
+.logout_icons {
+  width: 100%;
+  height: 40px;
+  text-align: left;
+  padding: 0.5rem 1rem;
+}
+.icons__logout {
+  font-size: 24px;
+  cursor: pointer;
+}
+.icons__logout:hover {
+  opacity: 0.5;
+}

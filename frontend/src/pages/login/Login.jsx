@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './login.css';
 import image from '../../assets/Background.jpg';
 import { FcPlus } from 'react-icons/fc';
@@ -24,9 +24,17 @@ function Login() {
   const [tidakada, settidakAda] = useState(false);
 
   //login input
-  const [loginUsername, setLoginUsername] = useState('');
+  const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
 
+  //IF HAVE TOKEN, RREDIARECT TO HOME
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      dispatch({ type: 'LOGIN' });
+      navigate('/home');
+    }
+  }, [dispatch, navigate]);
   const sendDataUser = (e) => {
     e.preventDefault();
     axios
@@ -109,14 +117,25 @@ function Login() {
   const onLoginSubmit = (e) => {
     e.preventDefault();
     axios
-      .get('/api/auth/users')
+      .post(
+        '/api/auth/users',
+        {
+          email: loginEmail,
+          password: loginPassword,
+        },
+        {
+          headers: { 'Content-type': 'application/json' },
+        }
+      )
       .then((response) => {
-        const data = response.data.data.filter((user) => user.first_name.toLowerCase() === loginUsername.toLowerCase() && user.password === loginPassword);
-        if (data.length > 0) {
-          if (data[0].email) {
-            dispatch({ type: 'LOGIN' });
-            navigate('/home?username=' + loginUsername + '&email=' + data[0].email);
-          }
+        const data = response.data;
+        console.log(data);
+        if (data) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('username', data.data.first_name);
+          localStorage.setItem('email', data.data.email);
+          dispatch({ type: 'LOGIN' });
+          navigate('/home');
         } else {
           settidakAda(true);
           setTimeout(() => {
@@ -126,12 +145,6 @@ function Login() {
       })
       .catch((err) => {
         console.log(err);
-        // if (err.data.length <= 0) {
-        //   settidakAda(true);
-        //   setTimeout(() => {
-        //     settidakAda(false);
-        //   }, 1500);
-        // }
       });
   };
   return (
@@ -173,7 +186,7 @@ function Login() {
               {' '}
               <span>Login To App</span>
               <form className="form-input">
-                <input value={loginUsername} onChange={(e) => setLoginUsername(e.target.value)} required type="username" placeholder="Enter Your Username *" />
+                <input value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required type="email" placeholder="Enter Your Email *" />
                 <input value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required type="password" placeholder="Enter Your Password *" />
                 <button onClick={onLoginSubmit} type="submit">
                   Submit

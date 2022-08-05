@@ -5,6 +5,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { TbBrandGravatar } from 'react-icons/tb';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { MdOutlineEmojiEmotions } from 'react-icons/md';
+import { CgLogOut } from 'react-icons/cg';
 import { BsSnow2 } from 'react-icons/bs';
 import { BsFillMicFill } from 'react-icons/bs';
 import { BsFillStickiesFill } from 'react-icons/bs';
@@ -20,7 +21,7 @@ import { AuthContext } from '../../App';
 const LOCAL_URL = 'http://localhost:5000/';
 
 function Home(props) {
-  const { state } = useContext(AuthContext);
+  const { state, dispatch } = useContext(AuthContext);
   const [searchParams] = useSearchParams();
   const [userData, setUserData] = useState();
 
@@ -31,7 +32,7 @@ function Home(props) {
   //FIND USER BY EMAIL
   useEffect(() => {
     axios
-      .get('/api/auth/user/' + searchParams.get('email'))
+      .get('/api/auth/user/' + localStorage.getItem('email'))
       .then((response) => {
         console.log('TEST:', response.data.data);
         setUserData(response.data.data);
@@ -40,7 +41,7 @@ function Home(props) {
         console.log(error);
       });
   }, [searchParams]);
-  console.log(userData);
+  console.log('USER DATA: ', userData);
   useEffect(() => {
     axios
       .get('/api/v1/chats')
@@ -80,15 +81,15 @@ function Home(props) {
     e.preventDefault();
     const data = {
       _id: 'askdad90endaned933823e2ne2n2o38' + new Date().getTime(),
-      username: userData[0].first_name,
-      email: searchParams.get('email'),
+      username: localStorage.getItem('username'),
+      email: localStorage.getItem('email'),
       msg: message,
       received: true,
     };
     setMessages([...messages, data]);
-    await axios.post('/api/v1/chats/post/' + searchParams.get('username'), {
-      username: userData[0].first_name,
-      email: searchParams.get('email'),
+    await axios.post('/api/v1/chats/post/' + localStorage.getItem('username'), {
+      username: localStorage.getItem('username'),
+      email: localStorage.getItem('email'),
       msg: message,
       received: true,
     });
@@ -125,6 +126,15 @@ function Home(props) {
           <CardChat />
           <CardChat />
         </div>
+        <div className="logout_icons">
+          <CgLogOut
+            onClick={() => {
+              localStorage.clear();
+              dispatch({ type: 'LOGOUT' });
+            }}
+            className="icons__logout"
+          />
+        </div>
       </div>
       <div className="home__right">
         <div className="homeRight__header">
@@ -148,7 +158,7 @@ function Home(props) {
         </div>
         <main className="main__chat">
           {messages.map((message) => {
-            if (message.username.toLowerCase() === searchParams.get('username').toLowerCase() && message.email === searchParams.get('email')) {
+            if (message.username.toLowerCase() === localStorage.getItem('username').toLowerCase() && message.email === localStorage.getItem('email')) {
               message.received = true;
               return <Chat key={message._id} message={message} />;
             } else {
